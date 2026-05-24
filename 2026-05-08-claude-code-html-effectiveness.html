@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude Code 与 HTML 输出：文章总结分析</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d252c;
+      --muted: #5c6b73;
+      --line: #dce4e8;
+      --paper: #fbfcfd;
+      --panel: #ffffff;
+      --teal: #0f766e;
+      --teal-soft: #e0f2ef;
+      --coral: #c2410c;
+      --coral-soft: #ffedd5;
+      --blue: #1d4ed8;
+      --blue-soft: #dbeafe;
+      --violet: #6d28d9;
+      --violet-soft: #ede9fe;
+      --amber: #a16207;
+      --amber-soft: #fef3c7;
+      --shadow: 0 12px 28px rgba(24, 39, 54, 0.08);
+      --radius: 8px;
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--blue);
+      text-underline-offset: 3px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(251, 252, 253, 0.92);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-inner,
+    .wrap {
+      width: min(1160px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 62px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 180px;
+    }
+
+    .brand strong {
+      font-size: 15px;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 8px 0;
+    }
+
+    nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      color: var(--ink);
+      background: #eef3f5;
+      outline: none;
+    }
+
+    header {
+      background:
+        linear-gradient(90deg, rgba(15, 118, 110, 0.12), rgba(29, 78, 216, 0.08)),
+        #f8fbfb;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 44px;
+      align-items: center;
+      min-height: 520px;
+      padding: 58px 0 38px;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 760;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 12px 0 18px;
+      max-width: 780px;
+      font-size: clamp(38px, 6vw, 76px);
+    }
+
+    .lead {
+      max-width: 760px;
+      color: #37434b;
+      font-size: clamp(17px, 2vw, 21px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 680;
+      text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      border-color: #9db0ba;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .visual {
+      position: relative;
+      min-height: 360px;
+    }
+
+    .doc-stack {
+      position: absolute;
+      inset: 0;
+    }
+
+    .sheet {
+      position: absolute;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .sheet.markdown {
+      top: 32px;
+      left: 0;
+      width: 65%;
+      height: 285px;
+      transform: rotate(-4deg);
+    }
+
+    .sheet.html {
+      right: 0;
+      bottom: 4px;
+      width: 76%;
+      height: 318px;
+      transform: rotate(2deg);
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 34px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .sheet-body {
+      padding: 16px;
+    }
+
+    .md-line {
+      height: 9px;
+      margin-bottom: 11px;
+      border-radius: 999px;
+      background: #d9e2e7;
+    }
+
+    .md-line.short {
+      width: 52%;
+    }
+
+    .md-line.mid {
+      width: 76%;
+    }
+
+    .html-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .mini-panel {
+      min-height: 72px;
+      border: 1px solid #d8e2e7;
+      border-radius: 6px;
+      background: #f7fafb;
+      padding: 10px;
+    }
+
+    .mini-panel.wide {
+      grid-column: 1 / -1;
+    }
+
+    .mini-tag {
+      display: inline-flex;
+      width: 62px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--teal);
+    }
+
+    .mini-chart {
+      display: flex;
+      align-items: end;
+      gap: 5px;
+      height: 44px;
+      margin-top: 10px;
+    }
+
+    .mini-chart span {
+      width: 18%;
+      border-radius: 4px 4px 0 0;
+      background: var(--blue);
+    }
+
+    .mini-chart span:nth-child(2) {
+      height: 28px;
+      background: var(--coral);
+    }
+
+    .mini-chart span:nth-child(3) {
+      height: 38px;
+      background: var(--teal);
+    }
+
+    .mini-chart span:nth-child(4) {
+      height: 22px;
+      background: var(--violet);
+    }
+
+    .flow-svg {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+    }
+
+    section {
+      scroll-margin-top: 84px;
+    }
+
+    .band {
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .band.alt {
+      background: #f6f9fa;
+    }
+
+    .section-inner {
+      padding: 52px 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(28px, 3vw, 42px);
+    }
+
+    .section-title p {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric {
+      min-height: 130px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 18px;
+      box-shadow: 0 6px 16px rgba(29, 37, 44, 0.04);
+    }
+
+    .metric b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .metric p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .takeaway-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .takeaway {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    .takeaway h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .takeaway p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      margin-bottom: 12px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .tag.teal {
+      color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .tag.coral {
+      color: var(--coral);
+      background: var(--coral-soft);
+    }
+
+    .tag.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .tag.violet {
+      color: var(--violet);
+      background: var(--violet-soft);
+    }
+
+    .tag.amber {
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .compare-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .compare-card header {
+      min-height: 64px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .compare-card h3 {
+      margin: 0 0 4px;
+      font-size: 19px;
+    }
+
+    .compare-card header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .compare-body {
+      padding: 18px;
+      min-height: 320px;
+    }
+
+    .markdown-preview {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      color: #334049;
+      white-space: pre-wrap;
+      background: #f4f7f8;
+      border: 1px solid #dbe3e7;
+      border-radius: 6px;
+      padding: 16px;
+      min-height: 284px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .html-preview {
+      display: grid;
+      gap: 12px;
+    }
+
+    .diagram-card,
+    .severity-table,
+    .flow-panel {
+      border: 1px solid #dbe3e7;
+      border-radius: 6px;
+      background: #f9fbfc;
+      padding: 14px;
+    }
+
+    .severity-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .severity-table th,
+    .severity-table td {
+      padding: 8px;
+      border-bottom: 1px solid #e3eaed;
+      text-align: left;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .pill.high {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .pill.mid {
+      color: var(--amber);
+      background: var(--amber-soft);
+    }
+
+    .pill.low {
+      color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .tabs,
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab,
+    .filter {
+      min-height: 36px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 680;
+    }
+
+    .tab[aria-selected="true"],
+    .filter.active {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+      color: var(--teal);
+    }
+
+    .tab-panel {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 22px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-panel h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .tab-panel p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .prompt-box {
+      position: relative;
+      padding: 16px;
+      border: 1px solid #d8e2e7;
+      border-radius: 6px;
+      background: #f6f9fa;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .copy-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .usecase {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 220px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+
+    .usecase h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .usecase p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .usecase small {
+      color: #6d7b83;
+      font-weight: 700;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+    }
+
+    .scorecard,
+    .notes-panel,
+    .source-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 20px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: 128px 1fr 44px;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #e7eef1;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+    }
+
+    .critique-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .critique {
+      border-left: 4px solid var(--line);
+      padding: 8px 0 8px 14px;
+    }
+
+    .critique strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .critique p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .notes-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+      gap: 16px;
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border: 1px solid #ccd8de;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 210px;
+      padding: 14px;
+      resize: vertical;
+    }
+
+    input,
+    select {
+      min-height: 40px;
+      padding: 8px 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #46545c;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .form-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status {
+      min-height: 24px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .source-panel h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .source-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 28px 0 38px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .compare,
+      .analysis-grid,
+      .notes-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .visual {
+        min-height: 320px;
+      }
+
+      .metric-row,
+      .takeaway-grid,
+      .usecase-grid,
+      .source-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+        padding: 10px 0;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+
+      .section-title {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .metric-row,
+      .takeaway-grid,
+      .usecase-grid,
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .score-row {
+        grid-template-columns: 1fr;
+      }
+
+      .sheet.markdown {
+        width: 72%;
+      }
+
+      .sheet.html {
+        width: 84%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <strong>本地维护版</strong>
+        <span>2026-05-08 文章分析</span>
+      </div>
+      <nav aria-label="页面导航">
+        <a href="#summary">摘要</a>
+        <a href="#compare">对照</a>
+        <a href="#usecases">用例</a>
+        <a href="#analysis">判断</a>
+        <a href="#maintain">维护</a>
+        <a href="#sources">来源</a>
+      </nav>
+    </div>
+  </div>
+
+  <header>
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">Claude Code / HTML artifacts / Markdown 之后</div>
+        <h1>《The Unreasonable Effectiveness of HTML》到底在说什么</h1>
+        <p class="lead">
+          Thariq Shihipar 的核心建议不是“把所有文档都改成花哨网页”，而是：当 AI agent 的输出已经从短回复变成长规格说明、代码理解、设计探索和一次性编辑器时，HTML 比 Markdown 更能让人真正读懂、参与并反馈。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#summary">看 90 秒摘要</a>
+          <a class="button" href="#promptlab">生成提示词</a>
+          <a class="button" href="#maintain">写维护笔记</a>
+        </div>
+      </div>
+      <div class="visual" aria-label="Markdown 到 HTML 的可视化对比">
+        <div class="doc-stack">
+          <div class="sheet markdown">
+            <div class="sheet-head"><span>README.md</span><span>linear text</span></div>
+            <div class="sheet-body">
+              <div class="md-line short"></div>
+              <div class="md-line"></div>
+              <div class="md-line mid"></div>
+              <div class="md-line"></div>
+              <div class="md-line short"></div>
+              <div class="md-line"></div>
+              <div class="md-line mid"></div>
+              <div class="md-line"></div>
+              <div class="md-line short"></div>
+              <div class="md-line"></div>
+            </div>
+          </div>
+          <div class="sheet html">
+            <div class="sheet-head"><span>artifact.html</span><span>visual + interactive</span></div>
+            <div class="sheet-body html-grid">
+              <div class="mini-panel">
+                <span class="mini-tag"></span>
+                <div class="mini-chart">
+                  <span style="height: 18px"></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-tag" style="background: var(--coral)"></span>
+                <svg class="flow-svg" viewBox="0 0 180 80" role="img" aria-label="流程图">
+                  <rect x="6" y="18" width="44" height="28" rx="5" fill="#dbeafe" stroke="#93c5fd"></rect>
+                  <rect x="68" y="18" width="44" height="28" rx="5" fill="#e0f2ef" stroke="#5eead4"></rect>
+                  <rect x="130" y="18" width="44" height="28" rx="5" fill="#ffedd5" stroke="#fdba74"></rect>
+                  <path d="M50 32H68M112 32h18" stroke="#60717b" stroke-width="3" marker-end="url(#arrow)"></path>
+                  <defs>
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                      <path d="M0 0L8 4L0 8Z" fill="#60717b"></path>
+                    </marker>
+                  </defs>
+                </svg>
+              </div>
+              <div class="mini-panel wide">
+                <span class="mini-tag" style="background: var(--violet)"></span>
+                <div class="md-line mid" style="margin-top: 14px"></div>
+                <div class="md-line"></div>
+                <div class="md-line short"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="summary" class="band">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>核心摘要</h2>
+          <p>这篇文章的关注点是 AI 协作中的输出界面，而不是文件格式洁癖。HTML 被看作让 agent 输出变得可视、可交互、可分享、可回流的载体。</p>
+        </div>
+        <div class="metric-row" aria-label="文章四个关键数字">
+          <div class="metric">
+            <b>9 分钟</b>
+            <p>Readwise 镜像标注的阅读时长，内容是一篇长文式经验总结。</p>
+          </div>
+          <div class="metric">
+            <b>20 个</b>
+            <p>配套示例站收集了 20 个自包含 HTML 文件。</p>
+          </div>
+          <div class="metric">
+            <b>2-4 倍</b>
+            <p>作者承认 HTML 通常比 Markdown 生成更慢。</p>
+          </div>
+          <div class="metric">
+            <b>1 个循环</b>
+            <p>目标是让人更深地处在“读、调、复制回 Claude Code”的循环中。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="band alt">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>文章论点</h2>
+          <p>把它压成一句话：Markdown 适合可编辑文本，HTML 适合 AI 生成的复杂认知界面。</p>
+        </div>
+        <div class="takeaway-grid">
+          <article class="takeaway">
+            <span class="tag teal">信息密度</span>
+            <h3>HTML 能承载更多类型的信息</h3>
+            <p>表格、CSS 设计数据、SVG、图片、交互控件、画布和空间布局都可以放在一个文件里。作者认为这让模型能用更高带宽解释复杂对象。</p>
+          </article>
+          <article class="takeaway">
+            <span class="tag blue">阅读体验</span>
+            <h3>长输出需要导航和层次</h3>
+            <p>当规格说明和计划超过一百行，线性 Markdown 很容易变成“我知道它有用，但我没读完”。HTML 可以用 tabs、锚点、图示和响应式布局降低阅读阻力。</p>
+          </article>
+          <article class="takeaway">
+            <span class="tag coral">协作传播</span>
+            <h3>HTML 更像可发链接的工件</h3>
+            <p>Markdown 经常需要平台渲染或附件传递；HTML 上传后就能直接发给同事。文章认为这会显著提高规格、报告和 PR 说明被阅读的概率。</p>
+          </article>
+          <article class="takeaway">
+            <span class="tag violet">双向互动</span>
+            <h3>读者可以在文档里操作</h3>
+            <p>滑块、开关、拖拽、表单、复制按钮让“看输出”变成“调参数并把结果贴回 agent”。这也是文章最重要的实践转向。</p>
+          </article>
+          <article class="takeaway">
+            <span class="tag amber">上下文吞吐</span>
+            <h3>Claude Code 的优势是能读很多上下文</h3>
+            <p>作者强调 Claude Code 可以读取文件系统、MCP、浏览器、git 历史等来源，再把这些来源合成为一页可读报告或工具。</p>
+          </article>
+          <article class="takeaway">
+            <span class="tag teal">参与感</span>
+            <h3>真正的卖点是“更在循环里”</h3>
+            <p>作者担心自己已经不再仔细阅读 agent 的计划；HTML 让他重新愿意审视、比较、操作和反馈。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="band">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>Markdown 与 HTML 对照</h2>
+          <p>文章不是说 Markdown 没价值，而是说当输出承担“解释、比较、调参、审阅”时，HTML 的表达面更宽。</p>
+        </div>
+        <div class="compare">
+          <article class="compare-card">
+            <header>
+              <h3>Markdown 输出</h3>
+              <p>轻、可 diff、适合人手编辑，但线性。</p>
+            </header>
+            <div class="compare-body">
+              <div class="markdown-preview"># PR Review
+
+## Summary
+- Refactors streaming backpressure handling.
+- Adds retry behavior when the sink is saturated.
+
+## Risk
+- Backpressure state transitions are hard to scan.
+- The retry loop may hide timeout errors.
+
+## Suggested checks
+1. Verify slow consumer behavior.
+2. Add a test for cancellation while paused.
+3. Review logs around retry boundaries.
+
+## Diagram
+source -> buffer -> sink
+         ^ retry |
+         |_______|</div>
+            </div>
+          </article>
+          <article class="compare-card">
+            <header>
+              <h3>HTML artifact</h3>
+              <p>更大、更慢，但能把结构直接呈现出来。</p>
+            </header>
+            <div class="compare-body html-preview">
+              <div class="diagram-card">
+                <strong>流式链路</strong>
+                <svg viewBox="0 0 560 120" width="100%" height="120" role="img" aria-label="带回压的流式处理流程">
+                  <defs>
+                    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                      <path d="M0 0L10 5L0 10Z" fill="#53666f"></path>
+                    </marker>
+                  </defs>
+                  <rect x="20" y="35" width="116" height="46" rx="7" fill="#dbeafe" stroke="#93c5fd"></rect>
+                  <rect x="222" y="35" width="116" height="46" rx="7" fill="#e0f2ef" stroke="#5eead4"></rect>
+                  <rect x="424" y="35" width="116" height="46" rx="7" fill="#ffedd5" stroke="#fdba74"></rect>
+                  <text x="78" y="63" text-anchor="middle" font-size="14" fill="#1d252c">source</text>
+                  <text x="280" y="63" text-anchor="middle" font-size="14" fill="#1d252c">buffer</text>
+                  <text x="482" y="63" text-anchor="middle" font-size="14" fill="#1d252c">sink</text>
+                  <path d="M136 58H222" stroke="#53666f" stroke-width="3" marker-end="url(#arrow2)"></path>
+                  <path d="M338 58H424" stroke="#53666f" stroke-width="3" marker-end="url(#arrow2)"></path>
+                  <path d="M424 84C350 118 248 118 178 84" fill="none" stroke="#c2410c" stroke-width="3" marker-end="url(#arrow2)"></path>
+                  <text x="300" y="108" text-anchor="middle" font-size="13" fill="#c2410c">retry / pause feedback</text>
+                </svg>
+              </div>
+              <div class="severity-table">
+                <table>
+                  <thead>
+                    <tr><th>发现</th><th>严重度</th><th>下一步</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>取消时仍可能重试</td><td><span class="pill high">高</span></td><td>补 cancellation test</td></tr>
+                    <tr><td>日志边界不清晰</td><td><span class="pill mid">中</span></td><td>标注 retry span</td></tr>
+                    <tr><td>注释落后于实现</td><td><span class="pill low">低</span></td><td>同步文档</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="usecases" class="band alt">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>适用场景</h2>
+          <p>配套示例站把 HTML artifact 分成九类。点击筛选，快速判断你应该在哪些任务上让 Claude Code 输出 HTML。</p>
+        </div>
+        <div class="filters" aria-label="用例筛选">
+          <button class="filter active" data-filter="all">全部</button>
+          <button class="filter" data-filter="engineering">工程</button>
+          <button class="filter" data-filter="design">设计</button>
+          <button class="filter" data-filter="ops">协作</button>
+          <button class="filter" data-filter="editor">编辑器</button>
+        </div>
+        <div class="usecase-grid" id="usecaseGrid">
+          <article class="usecase" data-kind="engineering design">
+            <small>Exploration & Planning</small>
+            <h3>探索与计划</h3>
+            <p>把多个方案并排展示，附上权衡、草图、数据流和实施里程碑。适合还没确定方向的时候。</p>
+            <span class="tag teal">替代长计划文档</span>
+          </article>
+          <article class="usecase" data-kind="engineering ops">
+            <small>Code Review & Understanding</small>
+            <h3>代码审阅与理解</h3>
+            <p>把 diff、模块关系、风险点、跳转链接和行内注释放在同一页。作者说自己会给每个 PR 附 HTML 解释。</p>
+            <span class="tag blue">替代平面 diff</span>
+          </article>
+          <article class="usecase" data-kind="design">
+            <small>Design</small>
+            <h3>设计系统与组件</h3>
+            <p>把 token、色板、字号、组件状态做成可观察的活文档，再喂回下一轮实现。</p>
+            <span class="tag violet">替代抽象描述</span>
+          </article>
+          <article class="usecase" data-kind="design editor">
+            <small>Prototyping</small>
+            <h3>交互原型</h3>
+            <p>动效、按钮、流程和转场无法只靠文字感受。HTML 可以用滑块和实时预览把偏好调出来。</p>
+            <span class="tag coral">替代想象</span>
+          </article>
+          <article class="usecase" data-kind="engineering ops">
+            <small>Research & Learning</small>
+            <h3>研究与学习报告</h3>
+            <p>读取代码、Slack、git 历史和网页，把复杂主题做成带图示、折叠段落和 FAQ 的解释器。</p>
+            <span class="tag amber">替代线性调研笔记</span>
+          </article>
+          <article class="usecase" data-kind="ops">
+            <small>Reports & Decks</small>
+            <h3>报告与演示</h3>
+            <p>周报、事故复盘、领导汇报和幻灯片可以变成单文件页面，方便分享与开会。</p>
+            <span class="tag blue">替代附件</span>
+          </article>
+          <article class="usecase" data-kind="editor engineering ops">
+            <small>Custom Editing Interfaces</small>
+            <h3>一次性编辑器</h3>
+            <p>票据排序、功能开关、prompt 调参、数据集审核都能变成临时 UI，最后导出 JSON、diff 或 Markdown。</p>
+            <span class="tag teal">替代纯文本来回描述</span>
+          </article>
+          <article class="usecase" data-kind="engineering">
+            <small>Diagrams</small>
+            <h3>图示与流程图</h3>
+            <p>用 SVG 表达架构、流程、状态机和因果关系，读者不必从 ASCII 图里猜空间结构。</p>
+            <span class="tag violet">替代 ASCII 图</span>
+          </article>
+          <article class="usecase" data-kind="ops editor">
+            <small>Feedback Loop</small>
+            <h3>带复制出口的反馈循环</h3>
+            <p>页面里的选择、排序、参数和笔记可以汇总成下一条 Claude Code prompt，让交互结果继续进入 agent。</p>
+            <span class="tag coral">替代口头反馈</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="promptlab" class="band">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>提示词工作台</h2>
+          <p>作者强调不必一上来做专门 skill，先从“做一个 HTML 文件 / HTML artifact”开始，关键是说清楚这个工件要帮你完成什么。</p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="提示词场景">
+          <button class="tab" role="tab" aria-selected="true" data-tab="plan">计划</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="review">审阅</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="prototype">原型</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="editor">编辑器</button>
+        </div>
+        <div class="tab-panel active" id="plan" role="tabpanel">
+          <h3>规划与探索</h3>
+          <p>适合还没有明确方向、需要并排比较方案的任务。</p>
+          <div class="prompt-box" data-copy="plan">请阅读当前代码和相关上下文，生成一个单文件 HTML artifact。把 4-6 个可行方案并排展示：每个方案包含设计草图、实现路径、风险、适用条件和取舍。最后给出推荐路线、里程碑、关键代码片段和需要我确认的问题。页面要易于快速浏览，并包含目录锚点。</div>
+          <div class="copy-row"><button class="button" data-copy-button="plan">复制提示词</button></div>
+        </div>
+        <div class="tab-panel" id="review" role="tabpanel">
+          <h3>代码审阅</h3>
+          <p>适合复杂 diff、陌生模块、异步流程、性能或安全风险分析。</p>
+          <div class="prompt-box" data-copy="review">请创建一个 HTML artifact 来帮我审阅这个 PR。重点解释变更意图、模块调用关系、状态流转和高风险 diff。请渲染关键 diff，添加行内旁注，用严重度颜色标记发现，并给出我应该优先验证的测试清单。不要只总结，请让我能一眼看出代码形状。</div>
+          <div class="copy-row"><button class="button" data-copy-button="review">复制提示词</button></div>
+        </div>
+        <div class="tab-panel" id="prototype" role="tabpanel">
+          <h3>设计原型</h3>
+          <p>适合按钮动效、布局方向、流程手感和组件状态比较。</p>
+          <div class="prompt-box" data-copy="prototype">请做一个单文件 HTML 原型，用真实可点击/可调节的控件展示这个交互。加入滑块、分段控制和开关，让我可以调整时长、缓动、密度、状态和颜色。页面需要实时预览，并提供“复制参数”按钮，把当前配置导出成 JSON 或可粘贴回 Claude Code 的 prompt。</div>
+          <div class="copy-row"><button class="button" data-copy-button="prototype">复制提示词</button></div>
+        </div>
+        <div class="tab-panel" id="editor" role="tabpanel">
+          <h3>一次性编辑器</h3>
+          <p>适合排序、分桶、审核、标注、配置编辑和 prompt 调参。</p>
+          <div class="prompt-box" data-copy="editor">请根据这份数据创建一个一次性 HTML 编辑器。把项目分组展示，支持拖拽/表单/筛选/校验，标出依赖和冲突。最重要的是页面底部要有导出按钮：复制最终 JSON、复制变更 diff、复制 Markdown 摘要，确保我能把交互结果继续交给 Claude Code 执行。</div>
+          <div class="copy-row"><button class="button" data-copy-button="editor">复制提示词</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analysis" class="band alt">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>我的分析判断</h2>
+          <p>这篇文章值得重视，但不应该理解成“Markdown 已死”。更准确的结论是：AI 输出正在从文档走向界面。</p>
+        </div>
+        <div class="analysis-grid">
+          <article class="scorecard">
+            <h3>HTML 相对优势评分</h3>
+            <div class="score-row"><span>复杂解释</span><div class="bar"><span style="width: 92%"></span></div><strong>9.2</strong></div>
+            <div class="score-row"><span>可视比较</span><div class="bar"><span style="width: 96%; background: var(--blue)"></span></div><strong>9.6</strong></div>
+            <div class="score-row"><span>团队分享</span><div class="bar"><span style="width: 84%; background: var(--coral)"></span></div><strong>8.4</strong></div>
+            <div class="score-row"><span>版本审阅</span><div class="bar"><span style="width: 45%; background: var(--amber)"></span></div><strong>4.5</strong></div>
+            <div class="score-row"><span>生成速度</span><div class="bar"><span style="width: 52%; background: var(--violet)"></span></div><strong>5.2</strong></div>
+          </article>
+          <article class="scorecard">
+            <h3>取舍与边界</h3>
+            <div class="critique-list">
+              <div class="critique" style="border-left-color: var(--teal)">
+                <strong>最强场景：一次性认知工件</strong>
+                <p>当目标是看懂、比较、调参、审阅或做决策，HTML 值得。因为读者的注意力比 token 更贵。</p>
+              </div>
+              <div class="critique" style="border-left-color: var(--amber)">
+                <strong>最大短板：可维护 diff</strong>
+                <p>HTML 很容易产生噪声 diff。如果工件要长期协作维护，仍然需要把数据、样式、脚本和生成流程管住。</p>
+              </div>
+              <div class="critique" style="border-left-color: var(--coral)">
+                <strong>风险：漂亮但不可信</strong>
+                <p>视觉层次会放大说服力。对研究报告、代码审阅和事故分析，仍要要求来源、证据、反例和测试路径。</p>
+              </div>
+              <div class="critique" style="border-left-color: var(--blue)">
+                <strong>实践建议：HTML 不是默认，是升级档</strong>
+                <p>短备忘、commit message、纯文本协议、需要精准 diff 的规范继续用 Markdown；复杂输出再切 HTML。</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="maintain" class="band">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>本地维护</h2>
+          <p>这块内容存在浏览器 localStorage 中，适合记录你后续对这篇文章的观察、团队使用结论和待试验场景。</p>
+        </div>
+        <div class="notes-layout">
+          <article class="notes-panel">
+            <label for="notes">维护笔记</label>
+            <textarea id="notes" placeholder="例如：下次代码审阅试试让 Claude Code 生成 HTML artifact，并要求包含风险表、调用图和复制测试清单。"></textarea>
+            <div class="copy-row">
+              <button class="button" id="saveNotes">保存笔记</button>
+              <button class="button" id="exportNotes">复制 Markdown</button>
+            </div>
+            <div class="status" id="noteStatus" aria-live="polite"></div>
+          </article>
+          <aside class="notes-panel">
+            <div class="form-stack">
+              <div>
+                <label for="team">维护对象</label>
+                <input id="team" value="个人知识库 / Claude Code 工作流">
+              </div>
+              <div>
+                <label for="mode">当前采用策略</label>
+                <select id="mode">
+                  <option>复杂输出优先 HTML，短文本保留 Markdown</option>
+                  <option>只在代码审阅和设计原型使用 HTML</option>
+                  <option>全面尝试 HTML artifact</option>
+                  <option>继续以 Markdown 为主，HTML 做实验</option>
+                </select>
+              </div>
+              <div>
+                <label for="next">下一个试验</label>
+                <input id="next" value="把一次 PR review 输出成 HTML artifact">
+              </div>
+              <button class="button primary" id="saveMeta">保存维护配置</button>
+              <div class="status" id="metaStatus" aria-live="polite"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="sources" class="band alt">
+      <div class="wrap section-inner">
+        <div class="section-title">
+          <h2>来源与核查</h2>
+          <p>本页基于 2026-05-18 核查到的公开页面整理。原帖在 X 上，Readwise 镜像提供了可读文本，Simon Willison 的链接博客提供了独立评论。</p>
+        </div>
+        <div class="source-grid">
+          <article class="source-panel">
+            <h3>原文镜像</h3>
+            <p>Readwise 公开页面：标题、作者、阅读时长、主要论点、FAQ 和用例描述。</p>
+            <a href="https://readwise.io/reader/shared/01kr935vc6pw9f11tfkbcz5j9b/">打开 Readwise 镜像</a>
+          </article>
+          <article class="source-panel">
+            <h3>配套示例</h3>
+            <p>Thariq 的示例站：20 个自包含 HTML 文件，覆盖计划、审阅、设计、报告和编辑器。</p>
+            <a href="https://thariqs.github.io/html-effectiveness/">打开示例站</a>
+          </article>
+          <article class="source-panel">
+            <h3>外部评论</h3>
+            <p>Simon Willison 在 2026-05-08 记录了这篇文章如何让他重新考虑 HTML 输出。</p>
+            <a href="https://simonwillison.net/2026/May/8/unreasonable-effectiveness-of-html/">打开 Simon Willison 评论</a>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      本文件为本地交互式总结页：2026-05-08-claude-code-html-effectiveness.html。内容为中文分析，不是原文转载。
+    </div>
+  </footer>
+
+  <script>
+    const filters = document.querySelectorAll(".filter");
+    const usecases = document.querySelectorAll(".usecase");
+    filters.forEach((button) => {
+      button.addEventListener("click", () => {
+        filters.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        const filter = button.dataset.filter;
+        usecases.forEach((card) => {
+          const visible = filter === "all" || card.dataset.kind.includes(filter);
+          card.style.display = visible ? "flex" : "none";
+        });
+      });
+    });
+
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".tab-panel");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((item) => item.setAttribute("aria-selected", "false"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        tab.setAttribute("aria-selected", "true");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    async function copyText(text, label) {
+      try {
+        await navigator.clipboard.writeText(text);
+        label.textContent = "已复制";
+        window.setTimeout(() => {
+          label.textContent = "复制提示词";
+        }, 1400);
+      } catch (error) {
+        label.textContent = "复制失败";
+      }
+    }
+
+    document.querySelectorAll("[data-copy-button]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const key = button.dataset.copyButton;
+        const box = document.querySelector(`[data-copy="${key}"]`);
+        copyText(box.textContent.trim(), button);
+      });
+    });
+
+    const notes = document.getElementById("notes");
+    const team = document.getElementById("team");
+    const mode = document.getElementById("mode");
+    const next = document.getElementById("next");
+    const noteStatus = document.getElementById("noteStatus");
+    const metaStatus = document.getElementById("metaStatus");
+    const saved = JSON.parse(localStorage.getItem("htmlEffectivenessNotes") || "{}");
+    notes.value = saved.notes || "";
+    team.value = saved.team || team.value;
+    mode.value = saved.mode || mode.value;
+    next.value = saved.next || next.value;
+
+    function collectState() {
+      return {
+        notes: notes.value,
+        team: team.value,
+        mode: mode.value,
+        next: next.value,
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function saveState(target) {
+      localStorage.setItem("htmlEffectivenessNotes", JSON.stringify(collectState()));
+      target.textContent = "已保存到本地浏览器";
+      window.setTimeout(() => {
+        target.textContent = "";
+      }, 1800);
+    }
+
+    document.getElementById("saveNotes").addEventListener("click", () => saveState(noteStatus));
+    document.getElementById("saveMeta").addEventListener("click", () => saveState(metaStatus));
+    document.getElementById("exportNotes").addEventListener("click", async () => {
+      const state = collectState();
+      const markdown = `# HTML artifact 工作流维护笔记
+
+- 维护对象：${state.team}
+- 当前策略：${state.mode}
+- 下一个试验：${state.next}
+- 更新时间：${state.updatedAt}
+
+## 笔记
+
+${state.notes || "暂无笔记"}`;
+      try {
+        await navigator.clipboard.writeText(markdown);
+        noteStatus.textContent = "Markdown 已复制";
+      } catch (error) {
+        noteStatus.textContent = "复制失败，请检查浏览器权限";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown Magazine | Markdown 知识杂志模板</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f7f5ef;
+      --paper: #fffdf8;
+      --panel: #ffffff;
+      --ink: #172026;
+      --soft-ink: #3d4a50;
+      --muted: #6b767b;
+      --line: #dce0dd;
+      --line-strong: #bdc7c2;
+      --nav: #edf1ee;
+      --sage: #2f6f5e;
+      --sage-soft: #e0eee8;
+      --blue: #285f9f;
+      --blue-soft: #dfeafa;
+      --rust: #a8462f;
+      --rust-soft: #f7e4dc;
+      --gold: #8b6b20;
+      --gold-soft: #f2e9c9;
+      --violet: #5e548e;
+      --violet-soft: #ebe7f4;
+      --shadow: 0 14px 30px rgba(27, 34, 38, 0.09);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: auto;
+      scroll-padding-top: 67px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      line-height: 1.68;
+    }
+
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: var(--blue);
+      text-underline-offset: 3px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 245, 239, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) auto auto;
+      gap: 18px;
+      align-items: center;
+      width: min(1420px, calc(100% - 32px));
+      min-height: 66px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .brand strong {
+      overflow: hidden;
+      font-size: 15px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .segmented,
+    .quick-actions {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 4px 14px rgba(27, 34, 38, 0.04);
+    }
+
+    .mode-button,
+    .icon-button,
+    .text-button {
+      min-height: 34px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--soft-ink);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .mode-button {
+      padding: 6px 10px;
+    }
+
+    .mode-button.active {
+      border-color: var(--line);
+      background: var(--sage-soft);
+      color: var(--sage);
+    }
+
+    .priority-filter-label {
+      padding: 0 4px 0 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+
+    .icon-button {
+      width: 34px;
+      padding: 0;
+      font-size: 15px;
+    }
+
+    .icon-button:hover,
+    .text-button:hover,
+    .mode-button:hover {
+      border-color: var(--line-strong);
+      background: var(--nav);
+    }
+
+    .text-button {
+      padding: 6px 10px;
+      border-color: var(--line);
+      background: var(--panel);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr) 310px;
+      gap: 22px;
+      width: min(1420px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .toc,
+    .rail {
+      position: sticky;
+      top: 88px;
+      align-self: start;
+      max-height: calc(100vh - 108px);
+      overflow: auto;
+    }
+
+    .toc-card,
+    .rail-panel,
+    .article-head,
+    .section-card,
+    .bottom-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 8px 22px rgba(27, 34, 38, 0.05);
+    }
+
+    .toc-card {
+      padding: 14px;
+    }
+
+    .compass-card {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: 0 8px 22px rgba(27, 34, 38, 0.05);
+      padding: 14px;
+    }
+
+    .toc-title,
+    .rail-title,
+    .compass-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .compass-current {
+      display: grid;
+      gap: 7px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .compass-current strong {
+      display: block;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .compass-current p {
+      display: -webkit-box;
+      margin: 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+    }
+
+    .compass-hints {
+      display: grid;
+      gap: 7px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .compass-hints li {
+      display: grid;
+      grid-template-columns: 6px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      color: var(--soft-ink);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .compass-hints li::before {
+      width: 6px;
+      height: 6px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--sage);
+      content: "";
+    }
+
+    .priority-map {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .priority-row {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) 20px;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .priority-track {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e7ebe7;
+    }
+
+    .priority-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--sage);
+    }
+
+    .priority-fill.p0 {
+      background: var(--rust);
+    }
+
+    .priority-fill.p1 {
+      background: var(--gold);
+    }
+
+    .priority-fill.p2 {
+      background: var(--blue);
+    }
+
+    .priority-fill.p3 {
+      background: var(--violet);
+    }
+
+    .progress-track {
+      height: 7px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e6e9e5;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--sage), var(--blue));
+    }
+
+    .toc-list {
+      display: grid;
+      gap: 4px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc-link {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: var(--soft-ink);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .toc-link span:nth-child(2) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .toc-link.active {
+      background: var(--sage-soft);
+      color: var(--sage);
+      font-weight: 760;
+    }
+
+    .priority {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      min-height: 22px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 860;
+    }
+
+    .p0 {
+      color: #8d2314;
+      background: var(--rust-soft);
+    }
+
+    .p1 {
+      color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .p2 {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .p3 {
+      color: var(--violet);
+      background: var(--violet-soft);
+    }
+
+    .article {
+      min-width: 0;
+    }
+
+    .article::after {
+      display: block;
+      height: calc(100vh - 180px);
+      min-height: 360px;
+      content: "";
+    }
+
+    .article-head {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(120deg, rgba(47, 111, 94, 0.16), rgba(40, 95, 159, 0.12) 45%, rgba(168, 70, 47, 0.08)),
+        var(--paper);
+    }
+
+    .article-head::after {
+      position: absolute;
+      right: 28px;
+      bottom: 22px;
+      width: 174px;
+      height: 174px;
+      border: 1px solid rgba(47, 111, 94, 0.22);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .head-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 28px;
+      padding: 34px;
+    }
+
+    .eyebrow {
+      color: var(--sage);
+      font-size: 13px;
+      font-weight: 820;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.22;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 10px 0 14px;
+      font-size: clamp(34px, 5vw, 58px);
+    }
+
+    .summary {
+      max-width: 820px;
+      margin: 0;
+      color: var(--soft-ink);
+      font-size: 17px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--soft-ink);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .score-block {
+      align-self: end;
+      border: 1px solid rgba(47, 111, 94, 0.25);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+      padding: 18px;
+    }
+
+    .score-block strong {
+      display: block;
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .score-block span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .meta-item {
+      border: 1px solid rgba(189, 199, 194, 0.7);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.76);
+      padding: 10px;
+    }
+
+    .meta-item b {
+      display: block;
+      font-size: 12px;
+    }
+
+    .meta-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .section-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .empty-state {
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .section-card {
+      overflow: hidden;
+      scroll-margin-top: 67px;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      gap: 14px;
+      align-items: center;
+      width: 100%;
+      padding: 17px 18px;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      background: var(--panel);
+      color: inherit;
+      text-align: left;
+    }
+
+    .section-header:hover {
+      background: #fafbf8;
+    }
+
+    .section-card.open .section-header {
+      border-bottom-color: var(--line);
+    }
+
+    .section-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+    }
+
+    .section-heading {
+      min-width: 0;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(19px, 2vw, 26px);
+    }
+
+    .section-heading p {
+      margin: 4px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chevron {
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform 160ms ease;
+    }
+
+    .section-card.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: none;
+      padding: 20px 22px 24px;
+    }
+
+    .section-card.open .section-body {
+      display: block;
+    }
+
+    .section-body p {
+      margin: 0 0 14px;
+      color: var(--soft-ink);
+    }
+
+    .learning-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .learning-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfa;
+      padding: 12px;
+    }
+
+    .learning-item b {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .learning-item span {
+      color: var(--soft-ink);
+      font-size: 13px;
+    }
+
+    .bullet-list {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .bullet-list li {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      color: var(--soft-ink);
+    }
+
+    .bullet-list li::before {
+      width: 7px;
+      height: 7px;
+      margin-top: 11px;
+      border-radius: 50%;
+      background: var(--sage);
+      content: "";
+    }
+
+    .quote {
+      margin: 18px 0;
+      border-left: 4px solid var(--sage);
+      background: #f5faf7;
+      padding: 12px 14px;
+      color: var(--soft-ink);
+      font-weight: 680;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 16px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f4f6f3;
+      color: #344148;
+      font-weight: 820;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    pre {
+      overflow: auto;
+      margin: 16px 0 0;
+      border: 1px solid #cfd8d4;
+      border-radius: var(--radius);
+      background: #172026;
+      color: #eef4ef;
+      padding: 16px;
+      font-size: 12px;
+      line-height: 1.62;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .inline-code {
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #f4f6f3;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    .term {
+      border-bottom: 1px dotted var(--blue);
+      color: var(--blue);
+      cursor: help;
+      font-weight: 760;
+    }
+
+    .rail {
+      display: grid;
+      gap: 12px;
+    }
+
+    .rail-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .rail-tab {
+      min-height: 34px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 820;
+    }
+
+    .rail-tab.active {
+      background: var(--sage-soft);
+      color: var(--sage);
+    }
+
+    .rail-panel {
+      display: none;
+      padding: 16px;
+    }
+
+    .rail-panel.active {
+      display: block;
+    }
+
+    .audit-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 8px 22px rgba(27, 34, 38, 0.05);
+      padding: 16px;
+    }
+
+    .audit-score {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .audit-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: conic-gradient(var(--sage) var(--audit-score, 0%), #e5ebe6 0);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .audit-ring::after {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: var(--panel);
+      content: "";
+    }
+
+    .audit-ring span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .audit-copy strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .audit-copy p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .audit-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .audit-metric {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfa;
+      padding: 9px;
+    }
+
+    .audit-metric b {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .audit-metric span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .audit-checks {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .audit-checks li {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 7px;
+      align-items: start;
+      color: var(--soft-ink);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .audit-checks li::before {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--sage-soft);
+      color: var(--sage);
+      content: "✓";
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .audit-checks li.missing::before {
+      background: var(--rust-soft);
+      color: var(--rust);
+      content: "!";
+    }
+
+    .focus-list,
+    .term-list,
+    .reference-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .focus-card,
+    .term-card,
+    .reference-card {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfa;
+      padding: 12px;
+    }
+
+    .focus-card b,
+    .term-card b,
+    .reference-card b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .focus-card p,
+    .term-card p,
+    .reference-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reference-card a {
+      display: inline-block;
+      margin-top: 7px;
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .import-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #fbfcfa;
+      color: var(--ink);
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.52;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .status {
+      min-height: 22px;
+      color: var(--sage);
+      font-size: 13px;
+      font-weight: 760;
+    }
+
+    .bottom-panel {
+      margin-top: 18px;
+      padding: 22px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .bottom-panel h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .check-list li {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 8px;
+      color: var(--soft-ink);
+    }
+
+    .check-list li::before {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--sage-soft);
+      color: var(--sage);
+      content: "✓";
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 60;
+      display: none;
+      max-width: 280px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: #172026;
+      color: #f7fbf8;
+      box-shadow: var(--shadow);
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.55;
+      pointer-events: none;
+    }
+
+    .presentation .shell {
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 1080px;
+    }
+
+    .presentation .toc,
+    .presentation .rail {
+      display: none;
+    }
+
+    .presentation .section-card:not(.open) {
+      display: none;
+    }
+
+    .presentation .section-body {
+      display: block;
+      font-size: 18px;
+    }
+
+    .presentation .section-header {
+      pointer-events: none;
+    }
+
+    @media (max-width: 1180px) {
+      .shell {
+        grid-template-columns: 210px minmax(0, 1fr);
+      }
+
+      .rail {
+        grid-column: 1 / -1;
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 840px) {
+      .topbar-inner {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 10px 0;
+      }
+
+      .segmented,
+      .quick-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .shell {
+        grid-template-columns: 1fr;
+        width: min(100% - 24px, 720px);
+        padding-top: 14px;
+      }
+
+      .toc {
+        position: static;
+        max-height: none;
+      }
+
+      .toc-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .head-content,
+      .bottom-grid,
+      .learning-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .head-content {
+        padding: 24px;
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-header {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+      }
+
+      .section-header .priority {
+        display: none;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .toc-list,
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rail-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media print {
+      .topbar,
+      .toc,
+      .rail,
+      .quick-actions {
+        display: none !important;
+      }
+
+      body {
+        background: #fff;
+      }
+
+      .shell {
+        display: block;
+        width: 100%;
+        padding: 0;
+      }
+
+      .article-head,
+      .section-card,
+      .bottom-panel {
+        break-inside: avoid;
+        border-color: #cfd4d0;
+        box-shadow: none;
+      }
+
+      .section-body {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <strong id="barTitle">Markdown Magazine</strong>
+        <span id="barSubtitle">知识杂志阅读层 · JSON 可导入</span>
+      </div>
+      <div class="segmented" aria-label="阅读模式">
+        <button class="mode-button active" data-mode="read">阅读</button>
+        <button class="mode-button" data-mode="present">演示</button>
+      </div>
+      <div class="quick-actions" aria-label="等级筛选">
+        <span class="priority-filter-label">显示等级</span>
+        <button class="mode-button" data-priority-filter="P0">P0</button>
+        <button class="mode-button" data-priority-filter="P1">P1</button>
+        <button class="mode-button" data-priority-filter="P2">P2</button>
+        <button class="mode-button active" data-priority-filter="P3">P3</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="toc" aria-label="自动目录">
+      <div class="toc-card">
+        <div class="toc-title"><span>目录</span><span id="tocCount">0 节</span></div>
+        <div class="progress-track" aria-label="阅读进度"><div class="progress-bar" id="progressBar"></div></div>
+        <ol class="toc-list" id="tocList"></ol>
+      </div>
+      <div class="compass-card" aria-label="学习罗盘">
+        <div class="compass-title"><span>学习罗盘</span><span id="compassIndex">当前</span></div>
+        <div class="compass-current">
+          <span class="priority p0" id="compassPriority">P0</span>
+          <strong id="compassTitle">适合场景</strong>
+          <p id="compassPreview">跟随当前章节显示摘要和复习提示。</p>
+        </div>
+        <ul class="compass-hints" id="compassHints"></ul>
+        <div class="compass-title"><span>优先级分布</span><span id="priorityTotal">0</span></div>
+        <div class="priority-map" id="priorityMap"></div>
+      </div>
+    </aside>
+
+    <main class="article">
+      <article class="article-head">
+        <div class="head-content">
+          <div>
+            <div class="eyebrow" id="docEyebrow">Markdown Magazine | Markdown 知识杂志模板</div>
+            <h1 id="docTitle"></h1>
+            <p class="summary" id="docSummary"></p>
+            <div class="tags" id="docTags"></div>
+            <div class="meta-grid" id="metaGrid"></div>
+          </div>
+          <aside class="score-block">
+            <strong id="scoreValue">8.3</strong>
+            <span>推荐指数 / 10</span>
+            <span id="scoreReason">适合作为基础阅读层</span>
+          </aside>
+        </div>
+      </article>
+
+      <div class="section-stack" id="sectionStack"></div>
+
+      <section class="bottom-panel" id="conclusionPanel">
+        <div class="bottom-grid">
+          <div>
+            <h2>总结</h2>
+            <p id="conclusionText"></p>
+          </div>
+          <div>
+            <h2>行动建议</h2>
+            <ul class="check-list" id="actionList"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="rail" aria-label="侧边知识卡片">
+      <div class="rail-tabs" role="tablist">
+        <button class="rail-tab active" data-rail="cards" role="tab" aria-selected="true">重点</button>
+        <button class="rail-tab" data-rail="terms" role="tab" aria-selected="false">术语</button>
+        <button class="rail-tab" data-rail="refs" role="tab" aria-selected="false">链接</button>
+        <button class="rail-tab" data-rail="import" role="tab" aria-selected="false">导入</button>
+      </div>
+
+      <section class="rail-panel active" id="rail-cards" role="tabpanel">
+        <div class="rail-title"><span>重点卡片</span><span>P0/P1</span></div>
+        <ul class="focus-list" id="focusList"></ul>
+      </section>
+
+      <section class="rail-panel" id="rail-terms" role="tabpanel">
+        <div class="rail-title"><span>术语表</span><span>悬浮可查</span></div>
+        <ul class="term-list" id="termList"></ul>
+      </section>
+
+      <section class="rail-panel" id="rail-refs" role="tabpanel">
+        <div class="rail-title"><span>原文链接</span><span>资料</span></div>
+        <ul class="reference-list" id="referenceList"></ul>
+      </section>
+
+      <section class="rail-panel" id="rail-import" role="tabpanel">
+        <div class="rail-title"><span>结构化导入</span><span>JSON</span></div>
+        <div class="import-box">
+          <textarea id="jsonInput" spellcheck="false" aria-label="JSON 导入编辑器"></textarea>
+          <div class="button-row">
+            <button class="text-button" id="applyJson">应用 JSON</button>
+            <button class="text-button" id="copyJson">复制当前</button>
+            <button class="text-button" id="copySchema">复制 Schema</button>
+          </div>
+          <div class="status" id="importStatus" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="audit-panel" aria-label="导入体检">
+        <div class="rail-title"><span>导入体检</span><span id="auditLabel">Ready</span></div>
+        <div class="audit-score">
+          <div class="audit-ring" id="auditRing"><span id="auditScore">0%</span></div>
+          <div class="audit-copy">
+            <strong id="auditTitle">结构完整度</strong>
+            <p id="auditHint">检查当前 JSON 是否适合导入、复习和再次交给 GPT 生成。</p>
+          </div>
+        </div>
+        <div class="audit-metrics">
+          <div class="audit-metric"><b id="auditSections">0</b><span>章节</span></div>
+          <div class="audit-metric"><b id="auditCards">0</b><span>卡片</span></div>
+          <div class="audit-metric"><b id="auditTerms">0</b><span>术语</span></div>
+        </div>
+        <ul class="audit-checks" id="auditChecks"></ul>
+        <button class="text-button" id="copyImportPrompt">复制生成提示</button>
+      </section>
+    </aside>
+  </div>
+
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+  <script>
+    const knowledgeDoc = {
+      title: "Markdown Magazine｜Markdown 知识杂志模板",
+      summary: "把 Markdown 长文转成层级清晰、可复习、可导入的知识杂志页面。它重点解决三件事：快速分清结构与优先级，短时间学习和复盘，以及让 GPT 后续能按固定 JSON 生成可导入文件。",
+      tags: ["Markdown 美化", "长文阅读", "学习笔记", "结构化导入", "知识复习"],
+      recommendation: { score: "8.3", reason: "基础模板首选，但不应成为整个工作台的唯一核心" },
+      meta: [
+        { label: "模板名称", value: "Markdown Magazine" },
+        { label: "主形态", value: "结构化长文阅读页" },
+        { label: "维护成本", value: "低" },
+        { label: "扩展方向", value: "主题 / 思维导图 / 测验 / 演示页" }
+      ],
+      sections: [
+        {
+          id: "scenario",
+          title: "适合场景",
+          priority: "P0",
+          preview: "技术文章、课程手册、产品手册、学习笔记、面试资料、飞书文档美化与长文阅读页面。",
+          learn: ["先判断内容是否是长文知识", "确认读者需要扫读还是精读", "把复习对象做成稳定结构"],
+          body: [
+            "这个模板最适合把 Markdown 内容美化成网页，尤其是信息密度高、章节多、需要反复回看的材料。",
+            "优先用于技术文章、课程手册、产品手册、学习笔记、面试资料、飞书文档美化和长文阅读页面。"
+          ],
+          bullets: ["如果内容以解释、知识组织、复习和引用为主，它就是合适对象。", "如果内容是复杂流程模拟、强交互画布或多状态推演，它只能作为阅读层。"],
+          quote: "判断标准不是内容长不长，而是读者是否需要在短时间内抓住结构、重点和下一步。"
+        },
+        {
+          id: "layout",
+          title: "页面整体布局",
+          priority: "P0",
+          preview: "顶部标题摘要标签，左侧自动目录，中间正文，右侧重点卡片/术语/原文链接，底部总结与行动建议。",
+          learn: ["先看顶部判断主题", "用左侧目录定位层级", "用右侧卡片复习重点"],
+          body: [
+            "页面采用三栏知识杂志布局：左侧负责导航，中间负责阅读，右侧负责复习与跳转。",
+            "底部用于收束：总结、行动建议和相关资料，帮助读者把阅读结果转成下一步动作。"
+          ],
+          table: {
+            headers: ["区域", "职责", "优先级"],
+            rows: [
+              ["顶部", "文章标题、摘要、标签、推荐指数", "P0"],
+              ["左侧", "自动目录、阅读进度、章节跳转", "P0"],
+              ["中间", "正文、引用、代码、表格、折叠详情", "P0"],
+              ["右侧", "重点卡片、术语表、原文链接、JSON 导入", "P1"],
+              ["底部", "总结、行动建议、相关资料", "P1"]
+            ]
+          }
+        },
+        {
+          id: "main-board",
+          title: "主看板形态",
+          priority: "P1",
+          preview: "它不是强画布，而是强调章节美化、层级清晰、卡片重点、图文混排、折叠详情和术语解释。",
+          learn: ["不要把它做成白板", "正文是主轴", "卡片是辅助记忆"],
+          body: [
+            "主看板是结构化长文阅读页，不是无限画布。它的价值在于减少认知摩擦，让长内容变得可扫读、可定位、可复习。",
+            "章节美化、层级清晰、卡片式重点、图文混排、可折叠详情和术语解释，是这个模板的核心体验。"
+          ],
+          bullets: ["正文区保持稳定阅读节奏。", "重点卡片提供复习入口。", "折叠详情让长内容保持轻量。"]
+        },
+        {
+          id: "interactions",
+          title: "关键交互设计",
+          priority: "P0",
+          preview: "自动目录、章节折叠、重点高亮、代码块/表格美化、术语悬浮解释、原文链接卡片和模式切换。",
+          learn: ["优先实现降低认知负担的交互", "复习交互要比装饰更重要", "打印模式要可用"],
+          body: [
+            "交互应该服务于学习速度，而不是为了显得复杂。每个动作都应该帮助读者更快定位、理解、记忆或导出。",
+            "本页面已实现自动生成目录、章节折叠、重点高亮、代码块美化、表格美化、悬浮术语解释、原文链接卡片，以及阅读/演示/打印模式切换。"
+          ],
+          bullets: ["自动目录从 sections[] 生成，避免手动维护。", "只看重点会隐藏低优先级章节，适合复习。", "演示模式只保留主阅读区，适合讲解。"]
+        },
+        {
+          id: "modules",
+          title: "包含模块",
+          priority: "P1",
+          preview: "标题区、摘要区、自动目录、正文区、引用区、重点卡片、术语表、代码块、表格、总结区。",
+          learn: ["模块要稳定", "输入结构要简单", "不同内容复用同一壳"],
+          body: [
+            "模板模块不宜太多，核心模块稳定后，GPT 才容易生成可导入的结构化内容。",
+            "最小可用模块包括标题区、摘要区、自动目录、正文区、引用区、重点卡片、术语表、代码块、表格和总结区。"
+          ],
+          table: {
+            headers: ["模块", "输入字段", "输出体验"],
+            rows: [
+              ["标题区", "title / summary / tags", "快速识别主题"],
+              ["自动目录", "sections[].title", "快速跳转和定位"],
+              ["重点卡片", "cards[]", "复习关键判断"],
+              ["术语表", "terms[]", "降低理解门槛"],
+              ["正文区", "sections[]", "稳定阅读主轴"]
+            ]
+          }
+        },
+        {
+          id: "visual-style",
+          title: "视觉风格",
+          priority: "P2",
+          preview: "偏知识杂志风：米白背景、高级灰、清晰排版、大标题、克制阴影，接近 Notion / Linear / Apple 文档。",
+          learn: ["排版优先于装饰", "卡片只用于承载信息", "颜色负责优先级"],
+          body: [
+            "视觉应偏知识杂志风。背景可以使用温和纸张色，主体使用高级灰和清晰排版，大标题建立入口感，卡片阴影保持克制。",
+            "整体气质接近 Notion、Linear 和 Apple 文档，但更强调章节优先级与学习节奏。"
+          ],
+          bullets: ["P0 用更醒目的颜色标记。", "正文宽度不要过宽，避免扫读疲劳。", "右侧卡片用于复习，不要挤压正文。"]
+        },
+        {
+          id: "schema",
+          title: "结构化导入 Schema",
+          priority: "P0",
+          preview: "建议使用 title、summary、toc、sections、cards、terms、references、code_blocks、tables、conclusion。",
+          learn: ["结构要能被 GPT 稳定生成", "字段名要少而清晰", "导入失败要可诊断"],
+          body: [
+            "为了后续让 GPT 生成格式化文件并导入，数据结构应该保持扁平、清晰、宽容。正文主要放在 sections[]，复习资料放在 cards[] 和 terms[]。",
+            "推荐字段包括 title、summary、toc[]、sections[]、cards[]、terms[]、references[]、code_blocks[]、tables[]、conclusion。"
+          ],
+          code: `{
+  "title": "文章标题",
+  "summary": "文章摘要",
+  "tags": ["标签"],
+  "sections": [
+    {
+      "id": "stable-id",
+      "title": "章节标题",
+      "priority": "P0",
+      "preview": "目录中显示的一句话",
+      "learn": ["学习提示"],
+      "body": ["正文段落"],
+      "bullets": ["要点"],
+      "quote": "引用或核心判断"
+    }
+  ],
+  "cards": [{"title": "重点", "text": "解释", "priority": "P0"}],
+  "terms": [{"term": "术语", "definition": "解释"}],
+  "references": [{"title": "资料", "url": "https://example.com"}],
+  "conclusion": {"summary": "总结", "actions": ["行动建议"]}
+}`
+        },
+        {
+          id: "extensions",
+          title: "扩展性设计",
+          priority: "P2",
+          preview: "可扩展多主题皮肤、自动生成思维导图、自动提取术语、自动生成测验和自动生成演示页。",
+          learn: ["先保证阅读层可靠", "再扩展学习工具", "扩展仍然基于同一 JSON"],
+          body: [
+            "扩展不应该破坏基础阅读层。最稳妥的方式是保留同一份 JSON 数据，再衍生不同视图。",
+            "后续可以扩展多主题皮肤、自动生成思维导图、自动提取术语、自动生成测验和自动生成演示页。"
+          ],
+          bullets: ["思维导图从 sections[] 和 cards[] 生成。", "测验从 terms[]、cards[] 和 conclusion.actions 生成。", "演示页可以复用 priority 字段挑选内容。"]
+        },
+        {
+          id: "maintenance",
+          title: "维护成本",
+          priority: "P1",
+          preview: "维护成本低，是多个模板方案中最容易落地和复用的基础模板之一。",
+          learn: ["低成本来自结构稳定", "样式与数据分离", "导入导出减少手工维护"],
+          body: [
+            "这个模板维护成本低，因为它以结构化阅读为主，交互逻辑集中在目录、折叠、模式切换和导入导出。",
+            "只要 JSON Schema 稳定，后续不同主题文章都可以复用同一前端壳。"
+          ],
+          quote: "它适合作为所有复杂知识模板的基础阅读层。"
+        },
+        {
+          id: "pros-cons",
+          title: "优点与缺点",
+          priority: "P0",
+          preview: "优点是容易落地、适合文档美化、Schema 简单；缺点是交互感不如画布，不适合复杂链路模拟。",
+          learn: ["知道适用边界", "不要把基础阅读层当万能工作台", "根据任务切换模板"],
+          body: ["模板的价值和边界都很清楚：它是基础阅读层，而不是复杂模拟器。"],
+          table: {
+            headers: ["优点", "缺点"],
+            rows: [
+              ["最容易落地", "交互感不如画布模板"],
+              ["最适合文档美化", "不适合复杂链路模拟"],
+              ["JSON Schema 简单", "视觉冲击力有限"],
+              ["可作为所有模板的基础阅读层", "不应成为整个工作台唯一核心"]
+            ]
+          }
+        },
+        {
+          id: "recommendation",
+          title: "推荐指数",
+          priority: "P1",
+          preview: "8.3 / 10。适合作为基础模板，但不应该成为整个工作台的唯一核心。",
+          learn: ["作为默认阅读层", "配合画布/测验/演示模板", "从简单 JSON 开始"],
+          body: [
+            "推荐指数 8.3 / 10。它非常适合作为基础模板，尤其适合把 GPT 生成的 Markdown 内容快速转成可读、可复习、可导入的网页。",
+            "但它不应该成为整个工作台的唯一核心。遇到复杂链路、流程模拟、互动实验和系统建模时，应该切换到更强的交互模板。"
+          ]
+        }
+      ],
+      cards: [
+        { title: "第一优先级", text: "先让读者在 30 秒内知道主题、结构和 P0 重点。", priority: "P0" },
+        { title: "复习路径", text: "左侧目录定位，中间折叠精读，右侧卡片回忆。", priority: "P0" },
+        { title: "导入策略", text: "让 GPT 输出固定 JSON，而不是直接输出一大段 HTML。", priority: "P1" },
+        { title: "边界判断", text: "长文知识用它，复杂模拟换画布或专用工具。", priority: "P1" }
+      ],
+      terms: [
+        { term: "JSON Schema", definition: "用于约束导入数据结构的字段设计，让 GPT 后续能稳定生成可解析内容。" },
+        { term: "结构化长文阅读页", definition: "以章节、目录、重点和总结为主的阅读界面，强调理解效率，不强调自由画布。" },
+        { term: "P0/P1/P2", definition: "优先级标记。P0 是必须先看，P1 是重要补充，P2 是理解增强或风格信息。" },
+        { term: "演示模式", definition: "隐藏侧栏并突出正文，适合把文章当作讲解稿或复习卡片使用。" }
+      ],
+      references: [
+        { title: "Notion 文档风格", text: "适合作为信息密度、留白和层级关系的参考。", url: "https://www.notion.so" },
+        { title: "Linear 文档气质", text: "适合参考克制、清晰、工作流友好的界面节奏。", url: "https://linear.app" },
+        { title: "Apple 文档排版", text: "适合参考标题、摘要和长文阅读的视觉节制。", url: "https://developer.apple.com/documentation/" }
+      ],
+      conclusion: {
+        summary: "Markdown Magazine 是一个低维护、高复用的知识阅读基础层。它的关键不是做得炫，而是让结构、优先级、复习路径和导入格式足够稳定。",
+        actions: [
+          "用这个页面作为 GPT 生成知识文件的目标格式。",
+          "要求 GPT 先输出 JSON，再导入页面检查层级和优先级。",
+          "复习时开启只看重点，讲解时切换演示模式。",
+          "当内容需要复杂模拟时，改用画布或交互工具模板。"
+        ]
+      }
+    };
+
+    const importSchema = {
+      title: "string",
+      summary: "string",
+      tags: ["string"],
+      meta: [{ label: "string", value: "string" }],
+      sections: [{
+        id: "string",
+        title: "string",
+        priority: "P0 | P1 | P2 | P3",
+        preview: "string",
+        learn: ["string"],
+        body: ["string"],
+        bullets: ["string"],
+        quote: "string",
+        table: { headers: ["string"], rows: [["string"]] },
+        code: "string"
+      }],
+      cards: [{ title: "string", text: "string", priority: "P0 | P1 | P2 | P3" }],
+      terms: [{ term: "string", definition: "string" }],
+      references: [{ title: "string", text: "string", url: "string" }],
+      conclusion: { summary: "string", actions: ["string"] }
+    };
+
+    let currentDoc = structuredClone(knowledgeDoc);
+    let currentPriorityLimit = "P3";
+    let syncTocFrame = null;
+    let syncTocScrollHandler = null;
+    let syncTocResizeHandler = null;
+
+    const $ = (selector) => document.querySelector(selector);
+    const sectionStack = $("#sectionStack");
+    const tocList = $("#tocList");
+    const tooltip = $("#tooltip");
+
+    function normalizePriority(priority) {
+      return ["P0", "P1", "P2", "P3"].includes(priority) ? priority : "P2";
+    }
+
+    function priorityRank(priority) {
+      return { P0: 0, P1: 1, P2: 2, P3: 3 }[normalizePriority(priority)];
+    }
+
+    function getVisibleSections(sections) {
+      const limitRank = priorityRank(currentPriorityLimit);
+      return (sections || []).filter((section) => priorityRank(section.priority) <= limitRank);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function termify(text) {
+      const terms = currentDoc.terms || [];
+      let output = escapeHtml(text);
+      terms.forEach((item) => {
+        const term = escapeHtml(item.term);
+        const definition = escapeHtml(item.definition);
+        output = output.replaceAll(term, `<span class="term" tabindex="0" data-definition="${definition}">${term}</span>`);
+      });
+      return output;
+    }
+
+    function renderHeader(doc) {
+      $("#docTitle").textContent = doc.title || "未命名知识杂志";
+      $("#barTitle").textContent = doc.title || "Markdown Magazine";
+      $("#docSummary").textContent = doc.summary || "";
+      $("#scoreValue").textContent = doc.recommendation?.score || "8.3";
+      $("#scoreReason").textContent = doc.recommendation?.reason || "适合作为基础阅读层";
+      $("#docTags").innerHTML = (doc.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+      $("#metaGrid").innerHTML = (doc.meta || []).map((item) => `
+        <div class="meta-item">
+          <b>${escapeHtml(item.label)}</b>
+          <span>${escapeHtml(item.value)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderToc(sections, totalCount = sections.length) {
+      $("#tocCount").textContent = `${sections.length} / ${totalCount} 节`;
+      tocList.innerHTML = sections.map((section, index) => {
+        const priority = normalizePriority(section.priority);
+        const sourceIndex = (currentDoc.sections || []).findIndex((item) => item.id === section.id);
+        return `
+          <li>
+            <a class="toc-link" href="#${escapeHtml(section.id)}" data-toc="${escapeHtml(section.id)}" onclick="event.preventDefault(); window.scrollToMagazineSection(this.dataset.toc); return false;">
+              <span>${String(sourceIndex + 1 || index + 1).padStart(2, "0")}</span>
+              <span>${escapeHtml(section.title)}</span>
+              <span class="priority ${priority.toLowerCase()}">${priority}</span>
+            </a>
+          </li>
+        `;
+      }).join("");
+    }
+
+    function setActiveSection(sectionId) {
+      if (!sectionId) {
+        document.querySelectorAll(".toc-link").forEach((link) => link.classList.remove("active"));
+        updateLearningCompass(null);
+        return;
+      }
+      document.querySelectorAll(".toc-link").forEach((link) => {
+        link.classList.toggle("active", link.dataset.toc === sectionId);
+      });
+      const activeLink = document.querySelector(`.toc-link[data-toc="${CSS.escape(sectionId)}"]`);
+      activeLink?.scrollIntoView({ block: "nearest" });
+      updateLearningCompass(sectionId);
+    }
+
+    function scrollToSection(sectionId, updateHash = true) {
+      const target = document.getElementById(sectionId);
+      if (!target) return;
+      const topbarHeight = document.querySelector(".topbar")?.offsetHeight || 0;
+      const targetTop = window.scrollY + target.getBoundingClientRect().top - topbarHeight;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({
+        top: Math.max(0, Math.min(targetTop, maxScroll)),
+        behavior: "auto"
+      });
+      if (updateHash) {
+        history.pushState(null, "", `#${sectionId}`);
+      }
+      setActiveSection(sectionId);
+    }
+
+    window.scrollToMagazineSection = scrollToSection;
+
+    function bindTocLinks() {
+      if (tocList.dataset.bound === "true") return;
+      tocList.dataset.bound = "true";
+      tocList.addEventListener("click", (event) => {
+        const target = event.target.nodeType === Node.ELEMENT_NODE ? event.target : event.target.parentElement;
+        const link = target?.closest(".toc-link");
+        if (!link) return;
+        event.preventDefault();
+        event.stopPropagation();
+        scrollToSection(link.dataset.toc);
+      }, true);
+    }
+
+    function renderPriorityMap(sections) {
+      const priorities = ["P0", "P1", "P2", "P3"];
+      const counts = priorities.reduce((result, priority) => {
+        result[priority] = sections.filter((section) => normalizePriority(section.priority) === priority).length;
+        return result;
+      }, {});
+      const total = Math.max(1, sections.length);
+      $("#priorityTotal").textContent = `${sections.length} 节`;
+      $("#priorityMap").innerHTML = priorities.map((priority) => `
+        <div class="priority-row">
+          <span>${priority}</span>
+          <span class="priority-track"><span class="priority-fill ${priority.toLowerCase()}" style="width: ${(counts[priority] / total) * 100}%"></span></span>
+          <span>${counts[priority]}</span>
+        </div>
+      `).join("");
+    }
+
+    function updateLearningCompass(activeId) {
+      const sections = getVisibleSections(currentDoc.sections || []);
+      if (!activeId && !sections.length) {
+        $("#compassIndex").textContent = "0 / 0";
+        $("#compassPriority").className = "priority p3";
+        $("#compassPriority").textContent = "NA";
+        $("#compassTitle").textContent = "暂无可见章节";
+        $("#compassPreview").textContent = "请切换到更高等级查看更多内容。";
+        $("#compassHints").innerHTML = "";
+        return;
+      }
+      const activeIndex = Math.max(0, sections.findIndex((section) => section.id === activeId));
+      const section = sections[activeIndex];
+      if (!section) return;
+
+      const priority = normalizePriority(section.priority);
+      $("#compassIndex").textContent = `${String(activeIndex + 1).padStart(2, "0")} / ${sections.length}`;
+      $("#compassPriority").className = `priority ${priority.toLowerCase()}`;
+      $("#compassPriority").textContent = priority;
+      $("#compassTitle").textContent = section.title;
+      $("#compassPreview").textContent = section.preview || "当前章节暂无摘要。";
+      $("#compassHints").innerHTML = (section.learn || []).slice(0, 3).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("");
+    }
+
+    function renderSectionBody(section) {
+      const learn = (section.learn || []).slice(0, 3);
+      const learnHtml = learn.length ? `
+        <div class="learning-strip">
+          ${learn.map((item, index) => `
+            <div class="learning-item">
+              <b>学习提示 ${index + 1}</b>
+              <span>${termify(item)}</span>
+            </div>
+          `).join("")}
+        </div>
+      ` : "";
+
+      const paragraphs = (section.body || []).map((p) => `<p>${termify(p)}</p>`).join("");
+      const bullets = section.bullets?.length ? `
+        <ul class="bullet-list">
+          ${section.bullets.map((item) => `<li>${termify(item)}</li>`).join("")}
+        </ul>
+      ` : "";
+      const quote = section.quote ? `<div class="quote">${termify(section.quote)}</div>` : "";
+      const table = section.table ? `
+        <div class="table-wrap">
+          <table>
+            <thead><tr>${section.table.headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${section.table.rows.map((row) => `<tr>${row.map((cell) => `<td>${termify(cell)}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      ` : "";
+      const code = section.code ? `<pre><code>${escapeHtml(section.code)}</code></pre>` : "";
+      return `${learnHtml}${paragraphs}${bullets}${quote}${table}${code}`;
+    }
+
+    function renderSections(sections) {
+      if (!sections.length) {
+        sectionStack.innerHTML = `<div class="empty-state">当前等级没有可显示章节，请切换到更高等级。</div>`;
+        return;
+      }
+      sectionStack.innerHTML = sections.map((section, index) => {
+        const priority = normalizePriority(section.priority);
+        const sourceIndex = (currentDoc.sections || []).findIndex((item) => item.id === section.id);
+        const open = true;
+        return `
+          <section class="section-card ${open ? "open" : ""}" id="${escapeHtml(section.id)}" data-priority="${priority}">
+            <button class="section-header" type="button" aria-expanded="${open ? "true" : "false"}">
+              <span class="section-number">${String(sourceIndex + 1 || index + 1).padStart(2, "0")}</span>
+              <span class="section-heading">
+                <h2>${escapeHtml(section.title)}</h2>
+                <p>${escapeHtml(section.preview || "")}</p>
+              </span>
+              <span class="priority ${priority.toLowerCase()}">${priority}</span>
+              <span class="chevron">⌄</span>
+            </button>
+            <div class="section-body">${renderSectionBody(section)}</div>
+          </section>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".section-header").forEach((button) => {
+        button.addEventListener("click", () => {
+          const card = button.closest(".section-card");
+          card.classList.toggle("open");
+          button.setAttribute("aria-expanded", card.classList.contains("open") ? "true" : "false");
+        });
+      });
+    }
+
+    function renderRail(doc) {
+      $("#focusList").innerHTML = (doc.cards || []).map((card) => {
+        const priority = normalizePriority(card.priority);
+        return `
+          <li class="focus-card">
+            <span class="priority ${priority.toLowerCase()}">${priority}</span>
+            <b>${escapeHtml(card.title)}</b>
+            <p>${termify(card.text)}</p>
+          </li>
+        `;
+      }).join("");
+
+      $("#termList").innerHTML = (doc.terms || []).map((item) => `
+        <li class="term-card">
+          <b>${escapeHtml(item.term)}</b>
+          <p>${escapeHtml(item.definition)}</p>
+        </li>
+      `).join("");
+
+      $("#referenceList").innerHTML = (doc.references || []).map((item) => `
+        <li class="reference-card">
+          <b>${escapeHtml(item.title)}</b>
+          <p>${escapeHtml(item.text || "")}</p>
+          <a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">打开资料</a>
+        </li>
+      `).join("");
+
+      $("#jsonInput").value = JSON.stringify(doc, null, 2);
+    }
+
+    function getAuditChecks(doc) {
+      const sections = doc.sections || [];
+      return [
+        { label: "标题和摘要完整", passed: Boolean(doc.title && doc.summary) },
+        { label: "至少 5 个章节", passed: sections.length >= 5 },
+        { label: "每节包含优先级", passed: sections.length > 0 && sections.every((section) => section.priority) },
+        { label: "包含重点卡片", passed: (doc.cards || []).length >= 3 },
+        { label: "包含术语解释", passed: (doc.terms || []).length >= 3 },
+        { label: "包含参考链接", passed: (doc.references || []).length > 0 },
+        { label: "包含总结和行动建议", passed: Boolean(doc.conclusion?.summary && doc.conclusion?.actions?.length) }
+      ];
+    }
+
+    function renderAudit(doc) {
+      const checks = getAuditChecks(doc);
+      const passed = checks.filter((item) => item.passed).length;
+      const score = Math.round((passed / checks.length) * 100);
+      $("#auditRing").style.setProperty("--audit-score", `${score}%`);
+      $("#auditScore").textContent = `${score}%`;
+      $("#auditLabel").textContent = score >= 90 ? "Ready" : "Review";
+      $("#auditTitle").textContent = score >= 90 ? "结构完整，可导入" : "结构需要补齐";
+      $("#auditHint").textContent = score >= 90
+        ? "当前内容已经适合复习、演示和继续交给 GPT 扩写。"
+        : "建议先补齐缺失字段，再作为模板数据导入。";
+      $("#auditSections").textContent = (doc.sections || []).length;
+      $("#auditCards").textContent = (doc.cards || []).length;
+      $("#auditTerms").textContent = (doc.terms || []).length;
+      $("#auditChecks").innerHTML = checks.map((item) => `
+        <li class="${item.passed ? "" : "missing"}">${escapeHtml(item.label)}</li>
+      `).join("");
+    }
+
+    function buildImportPrompt() {
+      return `请把我提供的 Markdown 或长文内容转换成 Markdown Magazine 可导入 JSON。
+
+要求：
+1. 只输出 JSON，不要输出 Markdown 代码围栏。
+2. 必须包含 title、summary、tags、meta、sections、cards、terms、references、conclusion。
+3. sections[] 中每节包含 id、title、priority、preview、learn、body，可按需要补充 bullets、quote、table、code。
+4. priority 只能使用 P0、P1、P2、P3；P0 表示必须优先学习。
+5. cards[] 用于复习重点，terms[] 用于术语解释，conclusion.actions[] 用于下一步行动。
+
+Schema 参考：
+${JSON.stringify(importSchema, null, 2)}`;
+    }
+
+    function renderConclusion(doc) {
+      $("#conclusionText").textContent = doc.conclusion?.summary || "";
+      $("#actionList").innerHTML = (doc.conclusion?.actions || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function bindTermTooltips() {
+      document.querySelectorAll(".term").forEach((node) => {
+        node.addEventListener("mouseenter", showTooltip);
+        node.addEventListener("focus", showTooltip);
+        node.addEventListener("mouseleave", hideTooltip);
+        node.addEventListener("blur", hideTooltip);
+      });
+    }
+
+    function showTooltip(event) {
+      tooltip.textContent = event.currentTarget.dataset.definition;
+      tooltip.style.display = "block";
+      const rect = event.currentTarget.getBoundingClientRect();
+      const left = Math.min(rect.left, window.innerWidth - 300);
+      tooltip.style.left = `${Math.max(12, left)}px`;
+      tooltip.style.top = `${Math.max(12, rect.bottom + 8)}px`;
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = "none";
+    }
+
+    function syncActiveToc() {
+      const sections = Array.from(document.querySelectorAll(".section-card"));
+      const links = Array.from(document.querySelectorAll(".toc-link"));
+      if (!sections.length || !links.length) {
+        updateLearningCompass(null);
+        return;
+      }
+
+      const topbarHeight = document.querySelector(".topbar")?.offsetHeight || 0;
+      const readingLine = topbarHeight + 28;
+      let active = sections[0];
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const pageBottom = document.documentElement.scrollHeight;
+
+      if (pageBottom - scrollBottom < 24) {
+        active = sections[sections.length - 1];
+      } else {
+        sections.forEach((section) => {
+          if (section.getBoundingClientRect().top <= readingLine) {
+            active = section;
+          }
+        });
+      }
+
+      if (!active) {
+        active = sections
+          .map((section) => ({ section, distance: Math.abs(section.getBoundingClientRect().top - readingLine) }))
+          .sort((a, b) => a.distance - b.distance)[0]?.section;
+      }
+
+      setActiveSection(active?.id);
+    }
+
+    function syncReadingState() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = max > 0 ? (window.scrollY / max) * 100 : 0;
+      $("#progressBar").style.width = `${Math.min(100, Math.max(0, percent))}%`;
+      syncActiveToc();
+    }
+
+    function scheduleReadingSync() {
+      if (syncTocFrame) return;
+      syncTocFrame = requestAnimationFrame(() => {
+        syncTocFrame = null;
+        syncReadingState();
+      });
+    }
+
+    function observeSections() {
+      if (syncTocScrollHandler) {
+        window.removeEventListener("scroll", syncTocScrollHandler);
+      }
+      if (syncTocResizeHandler) {
+        window.removeEventListener("resize", syncTocResizeHandler);
+      }
+      syncTocScrollHandler = scheduleReadingSync;
+      syncTocResizeHandler = scheduleReadingSync;
+      window.addEventListener("scroll", syncTocScrollHandler, { passive: true });
+      window.addEventListener("resize", syncTocResizeHandler);
+      syncReadingState();
+    }
+
+    function render(doc) {
+      currentDoc = doc;
+      const visibleSections = getVisibleSections(doc.sections || []);
+      renderHeader(doc);
+      renderToc(visibleSections, (doc.sections || []).length);
+      renderPriorityMap(doc.sections || []);
+      renderSections(visibleSections);
+      bindTocLinks();
+      renderRail(doc);
+      renderAudit(doc);
+      renderConclusion(doc);
+      bindTermTooltips();
+      observeSections();
+      if (location.hash) {
+        window.setTimeout(() => scrollToSection(decodeURIComponent(location.hash.slice(1)), false), 0);
+      }
+    }
+
+    function validateDoc(doc) {
+      if (!doc || typeof doc !== "object") throw new Error("JSON 根节点必须是对象。");
+      if (!Array.isArray(doc.sections)) throw new Error("缺少 sections[]。");
+      doc.sections.forEach((section, index) => {
+        if (!section.title) throw new Error(`第 ${index + 1} 个 section 缺少 title。`);
+        section.id = section.id || `section-${index + 1}`;
+        section.priority = normalizePriority(section.priority);
+      });
+      doc.tags = Array.isArray(doc.tags) ? doc.tags : [];
+      doc.cards = Array.isArray(doc.cards) ? doc.cards : [];
+      doc.terms = Array.isArray(doc.terms) ? doc.terms : [];
+      doc.references = Array.isArray(doc.references) ? doc.references : [];
+      doc.meta = Array.isArray(doc.meta) ? doc.meta : [];
+      doc.conclusion = doc.conclusion || { summary: "", actions: [] };
+      return doc;
+    }
+
+    document.querySelectorAll("[data-mode]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-mode]").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        const mode = button.dataset.mode;
+        document.body.classList.toggle("presentation", mode === "present");
+      });
+    });
+
+    document.querySelectorAll("[data-priority-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        currentPriorityLimit = button.dataset.priorityFilter;
+        document.querySelectorAll("[data-priority-filter]").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        render(currentDoc);
+        document.querySelector(".article")?.scrollIntoView({ block: "start" });
+      });
+    });
+
+    document.querySelectorAll(".rail-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".rail-tab").forEach((item) => {
+          item.classList.remove("active");
+          item.setAttribute("aria-selected", "false");
+        });
+        document.querySelectorAll(".rail-panel").forEach((panel) => panel.classList.remove("active"));
+        tab.classList.add("active");
+        tab.setAttribute("aria-selected", "true");
+        $(`#rail-${tab.dataset.rail}`).classList.add("active");
+      });
+    });
+
+    async function copyToClipboard(text, message) {
+      const status = $("#importStatus");
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = message;
+      } catch (error) {
+        status.textContent = "复制失败，请检查浏览器权限。";
+      }
+    }
+
+    $("#applyJson").addEventListener("click", () => {
+      const status = $("#importStatus");
+      try {
+        const doc = validateDoc(JSON.parse($("#jsonInput").value));
+        render(doc);
+        status.textContent = "已应用 JSON，目录和卡片已重新生成。";
+      } catch (error) {
+        status.textContent = error.message;
+      }
+    });
+
+    $("#copyJson").addEventListener("click", () => {
+      copyToClipboard(JSON.stringify(currentDoc, null, 2), "当前 JSON 已复制。");
+    });
+
+    $("#copySchema").addEventListener("click", () => {
+      copyToClipboard(JSON.stringify(importSchema, null, 2), "Schema 已复制。");
+    });
+
+    $("#copyImportPrompt").addEventListener("click", () => {
+      copyToClipboard(buildImportPrompt(), "生成提示已复制。");
+    });
+
+    render(currentDoc);
+  </script>
+</body>
+</html>
